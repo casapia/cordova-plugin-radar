@@ -162,7 +162,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
         @Override
         public void onEventsReceived(Context context, RadarEvent[] events, RadarUser user) {
+            Log.d("RadarCordovaPlugin", "onEventsReceived");
+
             if (RadarCordovaPlugin.eventsCallbackContext == null) {
+                Log.w("RadarCordovaPlugin", "eventsCallbackContext == null");
                 return;
             }
 
