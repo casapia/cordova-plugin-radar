@@ -8,9 +8,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,11 +37,11 @@ import io.radar.sdk.model.RadarTrip;
 import io.radar.sdk.model.RadarUser;
 
 public class RadarCordovaPlugin extends CordovaPlugin {
-
-    private static CallbackContext eventsCallbackContext;
-    private static CallbackContext locationCallbackContext;
-    private static CallbackContext clientLocationCallbackContext;
-    private static CallbackContext errorCallbackContext;
+    private static RadarCordovaPlugin instance;
+    private CallbackContext eventsCallbackContext;
+    private CallbackContext locationCallbackContext;
+    private CallbackContext clientLocationCallbackContext;
+    private CallbackContext errorCallbackContext;
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         try {
@@ -147,10 +145,9 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     }
 
     @Override
-    public void initialize(CordovaInterface cordova, CordovaWebView webView) {
-        Log.d("RadarCordovaPlugin", "initialize");
-        super.initialize(cordova, webView);
-        Radar.setReceiver(new RadarCordovaReceiver());
+    public void pluginInitialize() {
+        Log.d("RadarCordovaPlugin", "pluginInitialize");
+        RadarCordovaPlugin.instance = this;
     }
 
     public static class RadarCordovaReceiver extends RadarReceiver {
@@ -159,7 +156,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         public void onEventsReceived(Context context, RadarEvent[] events, RadarUser user) {
             Log.d("RadarCordovaPlugin", "onEventsReceived");
 
-            if (RadarCordovaPlugin.eventsCallbackContext == null) {
+            if (instance.eventsCallbackContext == null) {
                 Log.w("RadarCordovaPlugin", "eventsCallbackContext == null");
                 return;
             }
@@ -171,17 +168,17 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                 pluginResult.setKeepCallback(true);
-                RadarCordovaPlugin.eventsCallbackContext.sendPluginResult(pluginResult);
+                instance.eventsCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
                 Log.e("RadarCordovaPlugin", "JSONException", e);
-                RadarCordovaPlugin.eventsCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                instance.eventsCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
 
         @Override
         public void onLocationUpdated(Context context, Location location, RadarUser user) {
             Log.d("RadarCordovaPlugin", "onLocationUpdated");
-            if (RadarCordovaPlugin.locationCallbackContext == null) {
+            if (instance.locationCallbackContext == null) {
                 return;
             }
 
@@ -192,17 +189,17 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                 pluginResult.setKeepCallback(true);
-                RadarCordovaPlugin.locationCallbackContext.sendPluginResult(pluginResult);
+                instance.locationCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
                 Log.e("RadarCordovaPlugin", "JSONException", e);
-                RadarCordovaPlugin.locationCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                instance.locationCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
 
         @Override
         public void onClientLocationUpdated(Context context, Location location, boolean stopped, Radar.RadarLocationSource source) {
             Log.d("RadarCordovaPlugin", "onClientLocationUpdated");
-            if (RadarCordovaPlugin.clientLocationCallbackContext == null) {
+            if (instance.clientLocationCallbackContext == null) {
                 return;
             }
 
@@ -214,17 +211,17 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                 pluginResult.setKeepCallback(true);
-                RadarCordovaPlugin.clientLocationCallbackContext.sendPluginResult(pluginResult);
+                instance.clientLocationCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
                 Log.e("RadarCordovaPlugin", "JSONException", e);
-                RadarCordovaPlugin.clientLocationCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                instance.clientLocationCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
 
         @Override
         public void onError(Context context, Radar.RadarStatus status) {
             Log.d("RadarCordovaPlugin", "onError");
-            if (RadarCordovaPlugin.errorCallbackContext == null) {
+            if (instance.errorCallbackContext == null) {
                 return;
             }
 
@@ -234,10 +231,10 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
                 PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, obj);
                 pluginResult.setKeepCallback(true);
-                RadarCordovaPlugin.errorCallbackContext.sendPluginResult(pluginResult);
+                instance.errorCallbackContext.sendPluginResult(pluginResult);
             } catch (JSONException e) {
                 Log.e("RadarCordovaPlugin", "JSONException", e);
-                RadarCordovaPlugin.errorCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+                instance.errorCallbackContext.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
             }
         }
 
@@ -287,6 +284,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         final String publishableKey = args.getString(0);
         Log.d("RadarCordovaPlugin", "initialize: " + publishableKey);
         Context context = this.cordova.getActivity().getApplicationContext();
+        Radar.setReceiver(new RadarCordovaReceiver());
         Radar.initialize(context, publishableKey);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
@@ -624,42 +622,42 @@ public class RadarCordovaPlugin extends CordovaPlugin {
 
     public void onEvents(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "onEvents");
-        RadarCordovaPlugin.eventsCallbackContext = callbackContext;
+        instance.eventsCallbackContext = callbackContext;
     }
 
     public void onLocation(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "onLocation");
-        RadarCordovaPlugin.locationCallbackContext = callbackContext;
+        instance.locationCallbackContext = callbackContext;
     }
 
     public void onClientLocation(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "onClientLocation");
-        RadarCordovaPlugin.clientLocationCallbackContext = callbackContext;
+        instance.clientLocationCallbackContext = callbackContext;
     }
 
     public void onError(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "onError");
-        RadarCordovaPlugin.errorCallbackContext = callbackContext;
+        instance.errorCallbackContext = callbackContext;
     }
 
     public void offEvents(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "offEvents");
-        RadarCordovaPlugin.eventsCallbackContext = null;
+        instance.eventsCallbackContext = null;
     }
 
     public void offLocation(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "offLocation");
-        RadarCordovaPlugin.locationCallbackContext = null;
+        instance.locationCallbackContext = null;
     }
 
     public void offClientLocation(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "offClientLocation");
-        RadarCordovaPlugin.clientLocationCallbackContext = null;
+        instance.clientLocationCallbackContext = null;
     }
 
     public void offError(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
         Log.d("RadarCordovaPlugin", "offError");
-        RadarCordovaPlugin.errorCallbackContext = null;
+        instance.errorCallbackContext = null;
     }
 
     public void getTripOptions(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
