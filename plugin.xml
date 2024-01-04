@@ -46,19 +46,19 @@
         </config-file>
 
         <preference name="NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION"
-            default="This app uses your location for geofencing." />
+            default="Esta aplicación necesita acceder a tu ubicación para brindarte una experiencia personalizada y mejorar tus interacciones dentro de la app." />
         <config-file target="*-Info.plist" parent="NSLocationWhenInUseUsageDescription">
             <string>$NS_LOCATION_WHEN_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
 
         <preference name="NS_LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION"
-            default="This app uses your location for geofencing." />
+            default="Esta aplicación requiere acceso a tu ubicación para ofrecerte servicios basados en la ubicación, incluso cuando no estés utilizando activamente la app." />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysAndWhenInUseUsageDescription">
             <string>$NS_LOCATION_ALWAYS_AND_WHEN_IN_USE_USAGE_DESCRIPTION</string>
         </config-file>
 
         <preference name="NS_LOCATION_ALWAYS_USAGE_DESCRIPTION"
-            default="This app uses your location for geofencing." />
+            default="Esta aplicación requiere acceso a tu ubicación para ofrecerte servicios basados en la ubicación, incluso cuando no estés utilizando activamente la app." />
         <config-file target="*-Info.plist" parent="NSLocationAlwaysUsageDescription">
             <string>$NS_LOCATION_ALWAYS_USAGE_DESCRIPTION</string>
         </config-file>
