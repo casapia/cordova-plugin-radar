@@ -39,6 +39,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     private CallbackContext locationCallbackContext;
     private CallbackContext clientLocationCallbackContext;
     private CallbackContext errorCallbackContext;
+    private RadarCordovaReceiver receiver;
 
     public boolean execute(String action, final JSONArray args, final CallbackContext callbackContext) {
         try {
@@ -189,7 +190,8 @@ public class RadarCordovaPlugin extends CordovaPlugin {
     @Override
     public void pluginInitialize() {
         Log.d("RadarCordovaPlugin", "pluginInitialize");
-        Radar.setReceiver(new RadarCordovaReceiver());
+        super.pluginInitialize();
+        receiver = new RadarCordovaReceiver();
         RadarCordovaPlugin.instance = this;
     }
 
@@ -325,7 +327,7 @@ public class RadarCordovaPlugin extends CordovaPlugin {
         final String publishableKey = args.getString(0);
         Log.d("RadarCordovaPlugin", "initialize: " + publishableKey);
         Context context = this.cordova.getActivity().getApplicationContext();
-        Radar.initialize(context, publishableKey);
+        Radar.initialize(context, publishableKey, receiver, Radar.RadarLocationServicesProvider.GOOGLE, false);
         callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK));
     }
 
