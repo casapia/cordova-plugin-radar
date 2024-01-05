@@ -1,214 +1,192 @@
 const cordova = require('cordova');
-
-const exec = (action, args, callback) => {
-  cordova.exec(callback,
-    (err) => {
-      console.error(err, action, args);
-    }, 'Radar', action, args);
+const exec = (action, args = []) => {
+  return new Promise(function (resolve, reject) {
+    cordova.exec(resolve, reject, "Radar", action, args);
+  });
 };
 
 const initialize = (publishableKey) => {
-  exec('initialize', [publishableKey]);
+  return exec('initialize', [publishableKey]);
 }
 
 const setUserId = (userId) => {
-  exec('setUserId', [userId]);
+  return exec('setUserId', [userId]);
 };
 
-const getUserId = (callback) => {
-  exec("getUserId", null, callback)
+const getUserId = () => {
+  return exec("getUserId")
 }
 
 const setDescription = (description) => {
-  exec('setDescription', [description]);
+  return exec('setDescription', [description]);
 };
 
-const getDescription = (callback) => {
-  exec("getDescription", null, callback);
+const getDescription = () => {
+  return exec("getDescription");
 }
 
 const setMetadata = (metadata) => {
-  exec('setMetadata', [metadata]);
+  return exec('setMetadata', [metadata]);
 };
 
-const getMetadata = (callback) => {
-  exec('getMetadata', null, callback);
+const getMetadata = () => {
+  return exec('getMetadata');
 };
 
 const setAnonymousTrackingEnabled = (enabled) => {
-  exec('setAnonymousTrackingEnabled', [enabled]);
+  return exec('setAnonymousTrackingEnabled', [enabled]);
 }
 
 const setAdIdEnabled = (enabled) => {
-  exec('setAdIdEnabled', [enabled]);
+  return exec('setAdIdEnabled', [enabled]);
 }
 
-const getPermissionsStatus = (callback) => {
-  exec('getPermissionsStatus', null, callback);
+const getPermissionsStatus = () => {
+  return exec('getPermissionsStatus');
 };
 
 const requestPermissions = (background) => {
-  exec('requestPermissions', [background]);
+  return exec('requestPermissions', [background]);
 };
 
-const getLocation = (desiredAccuracy, callback) => {
-  exec('getLocation', [desiredAccuracy], callback);
+const getLocation = (desiredAccuracy) => {
+  return exec('getLocation', [desiredAccuracy]);
 };
 
-const trackOnce = (arg1, arg2) => {
-  if (typeof arg1 === 'function') {
-    exec('trackOnce', null, arg1);
-  } else {
-    exec('trackOnce', [arg1], arg2);
-  }
+const trackOnce = (arg1) => {
+  return exec('trackOnce', [arg1]);
 };
 
 const startTrackingEfficient = () => {
-  exec('startTrackingEfficient');
+  return exec('startTrackingEfficient');
 };
 
 const startTrackingResponsive = () => {
-  exec('startTrackingResponsive');
+  return exec('startTrackingResponsive');
 };
 
 const startTrackingContinuous = () => {
-  exec('startTrackingContinuous');
+  return exec('startTrackingContinuous');
 };
 
-const startTrackingCustom = (options, callback) => {
-  exec('startTrackingCustom', [options], callback);
+const startTrackingCustom = (options) => {
+  return exec('startTrackingCustom', [options]);
 };
 
-const mockTracking = (options, callback) => {
-  exec('mockTracking', [options], callback);
+const mockTracking = (options) => {
+  return exec('mockTracking', [options]);
 };
 
 const stopTracking = () => {
-  exec('stopTracking');
+  return exec('stopTracking');
 };
 
-const isTracking = (callback) => {
-  exec('isTracking', null, callback);
+const isTracking = () => {
+  return exec('isTracking');
 }
 
-const getTrackingOptions = (callback) => {
-  exec('getTrackingOptions', null, callback);
+const getTrackingOptions = () => {
+  return exec('getTrackingOptions');
 }
 
-const onEvents = (callback) => {
-  exec('onEvents', null, (data) => {
-    callback(data.events, data.user);
-  });
+const onEvents = (callback, errorCallback) => {
+  cordova.exec(callback, errorCallback, "Radar", "onEvents", []);
 };
 
-const onLocation = (callback) => {
-  exec('onLocation', null, (data) => {
-    callback(data.location, data.user);
-  });
+const onLocation = (callback, errorCallback) => {
+  cordova.exec(callback, errorCallback, "Radar", "onLocation", []);
 };
 
-const onClientLocation = (callback) => {
-  exec('onClientLocation', null, (data) => {
-    callback(data.location, data.stopped, data.source);
-  });
+const onClientLocation = (callback, errorCallback) => {
+  cordova.exec(callback, errorCallback, "Radar", "onClientLocation", []);
 };
 
-const onError = (callback) => {
-  exec('onError', null, (data) => {
-    callback(data.status);
-  });
+const onError = (callback, errorCallback) => {
+  cordova.exec(callback, errorCallback, "Radar", "onError", []);
 };
 
 const offEvents = () => {
-  exec('offEvents');
+  return exec('offEvents');
 };
 
 const offLocation = () => {
-  exec('offLocation');
+  return exec('offLocation');
 };
 
 const offClientLocation = () => {
-  exec('offClientLocation');
+  return exec('offClientLocation');
 };
 
 const offError = () => {
-  exec('offEvents');
+  return exec('offEvents');
 };
 
-const getTripOptions = (callback) => {
-  exec('getTripOptions', null, callback);
+const getTripOptions = () => {
+  return exec('getTripOptions');
 };
 
-const startTrip = (options, callback) => {
-  exec('startTrip', [options], callback);
+const startTrip = (options) => {
+  return exec('startTrip', [options]);
 };
 
-const updateTrip = (options, callback) => {
-  exec('updateTrip', [options], callback);
+const updateTrip = (options) => {
+  return exec('updateTrip', [options]);
 };
 
-const completeTrip = (callback) => {
-  exec('completeTrip', null, callback);
+const completeTrip = () => {
+  return exec('completeTrip');
 };
 
-const cancelTrip = (callback) => {
-  exec('cancelTrip', null, callback);
+const cancelTrip = () => {
+  return exec('cancelTrip');
 };
 
-const getContext = (arg1, arg2) => {
-  if (typeof arg1 === 'function') {
-    exec('getContext', null, arg1);
-  } else {
-    exec('getContext', [arg1], arg2);
-  }
+const getContext = (arg1) => {
+  return exec('getContext', [arg1]);
 };
 
-const searchPlaces = (options, callback) => {
-  exec('searchPlaces', [options], callback);
+const searchPlaces = (options) => {
+  return exec('searchPlaces', [options]);
 };
 
-const searchGeofences = (options, callback) => {
-  exec('searchGeofences', [options], callback);
+const searchGeofences = (options) => {
+  return exec('searchGeofences', [options]);
 };
 
-const autocomplete = (options, callback) => {
-  exec('autocomplete', [options], callback);
+const autocomplete = (options) => {
+  return exec('autocomplete', [options]);
 };
 
-const geocode = (query, callback) => {
-  exec('geocode', [query], callback);
+const geocode = (query) => {
+  return exec('geocode', [query]);
 };
 
-const reverseGeocode = (arg1, arg2) => {
-  if (typeof arg1 === 'function') {
-    exec('reverseGeocode', null, arg1);
-  } else {
-    exec('reverseGeocode', [arg1], arg2);
-  }
+const reverseGeocode = (arg1) => {
+    return exec('reverseGeocode', [arg1]);
 };
 
-const ipGeocode = (callback) => {
-  exec('ipGeocode', null, callback);
+const ipGeocode = () => {
+  return exec('ipGeocode');
 };
 
-const getDistance = (options, callback) => {
-  exec('getDistance', [options], callback);
+const getDistance = (options) => {
+  return exec('getDistance', [options]);
 };
 
-const getMatrix = (options, callback) => {
-  exec('getMatrix', [options], callback);
+const getMatrix = (options) => {
+  return exec('getMatrix', [options]);
 };
 
-const setForegroundServiceOptions = (args, callback) => {
-  exec('setForegroundServiceOptions', [options], callback)
+const setForegroundServiceOptions = (options) => {
+  return exec('setForegroundServiceOptions', [options])
 }
 
 const setLogLevel = (logLevel) => {
-  exec('setLogLevel', [logLevel]);
+  return exec('setLogLevel', [logLevel]);
 };
 
-const sendEvent = (options, callback) => {
-  exec('sendEvent', [options], callback);
+const sendEvent = (options) => {
+  return exec('sendEvent', [options]);
 }
 
 const Radar = {
