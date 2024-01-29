@@ -49,6 +49,10 @@ const requestPermissions = (background) => {
   return exec('requestPermissions', [background]);
 };
 
+const requestPermissionsSync = (background) => {
+  return exec('requestPermissionsSync', [background]);
+};
+
 const getLocation = (desiredAccuracy) => {
   return exec('getLocation', [desiredAccuracy]);
 };
@@ -201,6 +205,7 @@ const Radar = {
   setAdIdEnabled,
   getPermissionsStatus,
   requestPermissions,
+  requestPermissionsSync,
   getLocation,
   trackOnce,
   startTrackingEfficient,

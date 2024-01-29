@@ -9,8 +9,10 @@
 }
 
 - (void)pluginInitialize {
-  [Radar setDelegate:self];
-  locationManager = [CLLocationManager new];
+    [Radar setDelegate:self];
+    self.locationManager = [[CLLocationManager alloc] init];
+    self.locationManager.delegate = self;
+    self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
 }
 
 - (void)didReceiveEvents:(NSArray<RadarEvent *> *)events user:(RadarUser * _Nullable )user {
@@ -180,25 +182,8 @@
 
 - (void)getPermissionsStatus:(CDVInvokedUrlCommand *)command {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-
-    NSString *str;
-    switch (status) {
-        case kCLAuthorizationStatusDenied:
-            str = @"DENIED";
-            break;
-        case kCLAuthorizationStatusRestricted:
-            str = @"DENIED";
-            break;
-        case kCLAuthorizationStatusAuthorizedAlways:
-            str = @"GRANTED_BACKGROUND";
-            break;
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            str = @"GRANTED_FOREGROUND";
-            break;
-        default:
-            str = @"UNKNOWN";
-    }
-
+    NSString *str = [self stringForAuthorizationStatus:status];
+    
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:str];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
@@ -216,6 +201,65 @@
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+}
+
+- (void)requestPermissionsSync:(CDVInvokedUrlCommand *)command {
+    NSNumber *backgroundNumber = [command.arguments objectAtIndex:0];
+
+    BOOL background = [backgroundNumber boolValue];
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    NSString *str = [self stringForAuthorizationStatus:status];
+
+    if (background) {
+        if ((status == kCLAuthorizationStatusAuthorizedWhenInUse || status == kCLAuthorizationStatusNotDetermined ) && [self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
+            self.command = command;
+            [self.locationManager requestAlwaysAuthorization];
+            NSLog(@"requestAlwaysAuthorization");
+        } else {
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:str];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+    } else {
+        if (status == kCLAuthorizationStatusNotDetermined && [self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
+            self.command = command;
+            [self.locationManager requestWhenInUseAuthorization];
+            NSLog(@"requestWhenInUseAuthorization");
+        } else {
+            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:str];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+        }
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status {
+    NSLog(@"Authorization status: %d", status);
+    if (self.command != nil) {
+        NSString *str = [self stringForAuthorizationStatus:status];
+        CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:str];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:self.command.callbackId];
+        self.command = nil;
+    }
+}
+
+- (NSString *)stringForAuthorizationStatus:(CLAuthorizationStatus)status {
+    NSString *str;
+    switch (status) {
+        case kCLAuthorizationStatusDenied:
+            str = @"DENIED";
+            break;
+        case kCLAuthorizationStatusRestricted:
+            str = @"DENIED";
+            break;
+        case kCLAuthorizationStatusAuthorizedAlways:
+            str = @"GRANTED_BACKGROUND";
+            break;
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            str = @"GRANTED_FOREGROUND";
+            break;
+        default:
+            str = @"UNKNOWN";
+    }
+    return str;
 }
 
 - (void)getLocation:(CDVInvokedUrlCommand *)command {
