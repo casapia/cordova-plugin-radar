@@ -34,7 +34,7 @@
 
         <source-file src="src/android/src/main/java/io/radar/cordova/RadarCordovaPlugin.java"
             target-dir="src/io/radar/cordova/" />
-        <framework src="io.radar:sdk:3.8.18" />
+        <framework src="io.radar:sdk:3.9.1" />
 
     </platform>
     <platform name="ios">
@@ -67,7 +67,7 @@
         <source-file src="src/ios/CDVRadar.m" />
         <podspec>
             <pods use-frameworks="true">
-                <pod name="RadarSDK" spec="3.5.9" />
+                <pod name="RadarSDK" spec="3.9.3" />
             </pods>
         </podspec>
     </platform>
