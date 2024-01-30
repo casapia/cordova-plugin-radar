@@ -37,10 +37,6 @@ const setAnonymousTrackingEnabled = (enabled) => {
   return exec('setAnonymousTrackingEnabled', [enabled]);
 }
 
-const setAdIdEnabled = (enabled) => {
-  return exec('setAdIdEnabled', [enabled]);
-}
-
 const getPermissionsStatus = () => {
   return exec('getPermissionsStatus');
 };
@@ -189,10 +185,6 @@ const setLogLevel = (logLevel) => {
   return exec('setLogLevel', [logLevel]);
 };
 
-const sendEvent = (options) => {
-  return exec('sendEvent', [options]);
-}
-
 const Radar = {
   initialize,
   setUserId,
@@ -202,7 +194,6 @@ const Radar = {
   setMetadata,
   getMetadata,
   setAnonymousTrackingEnabled,
-  setAdIdEnabled,
   getPermissionsStatus,
   requestPermissions,
   requestPermissionsSync,
@@ -239,8 +230,7 @@ const Radar = {
   getDistance,
   getMatrix,
   setForegroundServiceOptions,
-  setLogLevel,
-  sendEvent
+  setLogLevel
 };
 
 module.exports = Radar;

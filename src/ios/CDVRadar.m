@@ -1,7 +1,6 @@
 #import "CDVRadar.h"
 
 @implementation CDVRadar {
-    CLLocationManager *locationManager;
     NSString *eventsCallbackId;
     NSString *locationCallbackId;
     NSString *clientLocationCallbackId;
@@ -169,17 +168,6 @@
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-//- (void)setAdIdEnabled:(CDVInvokedUrlCommand *)command {
-//    NSNumber *enabledNumber = [command.arguments objectAtIndex:0];
-//
-//    BOOL enabled = [enabledNumber boolValue];
-//
-//    [Radar setAdIdEnabled:enabled];
-//
-//    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
-//    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//}
-
 - (void)getPermissionsStatus:(CDVInvokedUrlCommand *)command {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
     NSString *str = [self stringForAuthorizationStatus:status];
@@ -194,9 +182,9 @@
     BOOL background = [backgroundNumber boolValue];
 
     if (background) {
-        [locationManager requestAlwaysAuthorization];
+        [self.locationManager requestAlwaysAuthorization];
     } else {
-        [locationManager requestWhenInUseAuthorization];
+        [self.locationManager requestWhenInUseAuthorization];
     }
 
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
@@ -982,29 +970,4 @@
         }];
     }];
 }
-
-//- (void)sendEvent:(CDVInvokedUrlCommand *)command {
-//    [self.commandDelegate runInBackground:^{
-//        NSDictionary *optionsDict = [command.arguments objectAtIndex:0];
-//        NSString *customType = optionsDict[@"customType"];
-//        NSDictionary *metadata = optionsDict[@"metadata"];
-//
-//        [Radar sendEvent:customType withMetadata:metadata completionHandler:^(RadarStatus status, CLLocation *location, NSArray<RadarEvent *> *events, RadarUser *user) {
-//            NSMutableDictionary *dict = [NSMutableDictionary new];
-//            [dict setObject:[Radar stringForStatus:status] forKey:@"status"];
-//            if (location) {
-//                [dict setObject:[Radar dictionaryForLocation:location] forKey:@"location"];
-//            }
-//            if (events) {
-//                [dict setObject:[RadarEvent arrayForEvents:events] forKey:@"events"];
-//            }
-//            if (user) {
-//                [dict setObject:[user dictionaryValue] forKey:@"user"];
-//            }
-//
-//            CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dict];
-//            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-//        }];
-//    }];
-//}
 @end
